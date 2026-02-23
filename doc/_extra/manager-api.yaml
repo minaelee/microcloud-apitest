@@ -2,23 +2,8 @@ openapi: 3.0.3
 info:
   title: MicroCloud Cluster Manager Management API
   version: 1.0.0
-  description: OpenAPI description for management-api routes.
-servers:
-  - url: /
+  description: OpenAPI description for management-api routes
 paths:
-  /:
-    get:
-      summary: Root of the API
-      responses:
-        "200":
-          description: LXD-style empty response.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LxdResponseEmpty"
-              examples:
-                success:
-                  $ref: "#/components/examples/LxdResponseEmpty"
   /1.0:
     get:
       summary: Reports user information from the request
@@ -26,7 +11,7 @@ paths:
         - bearerAuth: []
       responses:
         "200":
-          description: LXD-style response with request user metadata.
+          description: User metadata
           content:
             application/json:
               schema:
@@ -35,7 +20,7 @@ paths:
                 success:
                   $ref: "#/components/examples/LxdResponseAPIRoot"
         "500":
-          description: Failed to retrieve user information.
+          description: Failed to retrieve user information
           content:
             application/json:
               schema:
@@ -48,7 +33,7 @@ paths:
       summary: Readiness and liveness status
       responses:
         "200":
-          description: Service is healthy.
+          description: Service is healthy
           content:
             application/json:
               schema:
@@ -57,7 +42,7 @@ paths:
                 success:
                   $ref: "#/components/examples/LxdResponseEmpty"
         "500":
-          description: Internal server error.
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -72,7 +57,7 @@ paths:
         - bearerAuth: []
       responses:
         "200":
-          description: LXD-style response with configuration metadata.
+          description: Configuration metadata
           content:
             application/json:
               schema:
@@ -87,7 +72,7 @@ paths:
         - bearerAuth: []
       responses:
         "200":
-          description: LXD-style response with remote clusters metadata.
+          description: Remote clusters metadata
           content:
             application/json:
               schema:
@@ -96,7 +81,7 @@ paths:
                 success:
                   $ref: "#/components/examples/LxdResponseRemoteClusters"
         "500":
-          description: Failed to retrieve remote clusters.
+          description: Failed to retrieve remote clusters
           content:
             application/json:
               schema:
@@ -113,7 +98,7 @@ paths:
         - bearerAuth: []
       responses:
         "200":
-          description: LXD-style response with remote cluster metadata.
+          description: Remote cluster metadata
           content:
             application/json:
               schema:
@@ -122,7 +107,7 @@ paths:
                 success:
                   $ref: "#/components/examples/LxdResponseRemoteCluster"
         "404":
-          description: Remote cluster not found.
+          description: Remote cluster not found
           content:
             application/json:
               schema:
@@ -131,7 +116,7 @@ paths:
                 error:
                   $ref: "#/components/examples/LxdResponseErrorNotFound"
         "500":
-          description: Failed to retrieve remote cluster.
+          description: Failed to retrieve remote cluster
           content:
             application/json:
               schema:
@@ -145,7 +130,7 @@ paths:
         - bearerAuth: []
       responses:
         "200":
-          description: LXD-style response with no metadata.
+          description: Empty response
           content:
             application/json:
               schema:
@@ -168,7 +153,7 @@ paths:
                 $ref: "#/components/examples/RemoteClusterPatch"
       responses:
         "200":
-          description: LXD-style response with no metadata.
+          description: Empty response
           content:
             application/json:
               schema:
@@ -177,7 +162,7 @@ paths:
                 success:
                   $ref: "#/components/examples/LxdResponseEmpty"
         "400":
-          description: Invalid payload.
+          description: Invalid payload
           content:
             application/json:
               schema:
@@ -192,7 +177,7 @@ paths:
         - bearerAuth: []
       responses:
         "200":
-          description: LXD-style response with remote cluster tokens metadata.
+          description: Remote cluster tokens metadata
           content:
             application/json:
               schema:
@@ -215,7 +200,7 @@ paths:
                 $ref: "#/components/examples/RemoteClusterTokenPost"
       responses:
         "200":
-          description: LXD-style response with created token metadata.
+          description: Created token metadata
           content:
             application/json:
               schema:
@@ -224,7 +209,7 @@ paths:
                 success:
                   $ref: "#/components/examples/LxdResponseRemoteClusterTokenPostResponse"
         "400":
-          description: Invalid payload.
+          description: Invalid payload
           content:
             application/json:
               schema:
@@ -241,7 +226,7 @@ paths:
         - bearerAuth: []
       responses:
         "200":
-          description: LXD-style response with no metadata.
+          description: Empty response
           content:
             application/json:
               schema:
@@ -249,88 +234,6 @@ paths:
               examples:
                 success:
                   $ref: "#/components/examples/LxdResponseEmpty"
-  /oidc/login:
-    get:
-      summary: Start OIDC login flow
-      responses:
-        "302":
-          description: Redirect to OIDC provider.
-  /oidc/callback:
-    get:
-      summary: OIDC callback endpoint
-      parameters:
-        - name: state
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: code
-          in: query
-          required: false
-          schema:
-            type: string
-      responses:
-        "302":
-          description: Redirect after successful login.
-          headers:
-            Location:
-              schema:
-                type: string
-              example: /ui/
-        "500":
-          description: Invalid state token.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LxdResponse"
-              examples:
-                error:
-                  $ref: "#/components/examples/LxdResponseErrorInternal"
-  /oidc/logout:
-    get:
-      summary: OIDC logout endpoint
-      responses:
-        "302":
-          description: Redirect after logout.
-          headers:
-            Location:
-              schema:
-                type: string
-              example: /ui/
-        "500":
-          description: Internal server error.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LxdResponse"
-              examples:
-                error:
-                  $ref: "#/components/examples/LxdResponseErrorInternal"
-  /ui/{path}:
-    get:
-      summary: Serve UI assets
-      parameters:
-        - name: path
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: UI asset or index.html for client-side routing.
-          content:
-            text/html:
-              schema:
-                type: string
-              example: "<!doctype html><html><head><title>MicroCloud</title></head><body><div id=\"root\"></div></body></html>"
-            application/javascript:
-              schema:
-                type: string
-              example: "console.log('microcloud ui');"
-            text/css:
-              schema:
-                type: string
-              example: "body { margin: 0; font-family: sans-serif; }"
 components:
   securitySchemes:
     bearerAuth:
@@ -350,7 +253,7 @@ components:
       properties:
         type:
           type: string
-          description: LXD response type (sync, async, error).
+          description: LXD response type (sync, async, error)
         status:
           type: string
         status_code:
@@ -362,7 +265,7 @@ components:
         error_code:
           type: string
         metadata:
-          description: Endpoint-specific payload.
+          description: Endpoint-specific payload
     LxdResponseAPIRoot:
       allOf:
         - $ref: "#/components/schemas/LxdResponse"
@@ -416,17 +319,6 @@ components:
           properties:
             metadata:
               nullable: true
-    UserInfo:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-        name:
-          type: string
-      required:
-        - email
-        - name
     APIRoot:
       type: object
       properties:
@@ -544,19 +436,6 @@ components:
         - member
         - total
         - usage
-    ServerMetrics:
-      type: object
-      properties:
-        member:
-          type: string
-        metrics:
-          type: string
-        service:
-          type: string
-      required:
-        - member
-        - metrics
-        - service
     RemoteCluster:
       type: object
       properties:
@@ -722,75 +601,75 @@ components:
           api_version:
             value: "1.0"
             title: API Version
-            description: The version of the API being used.
+            description: The version of the API being used
           version:
             value: "1.2.3"
             title: Version
-            description: The version of MicroCloud Cluster Manager.
+            description: The version of MicroCloud Cluster Manager
           cluster_connector_domain:
             value: cluster-connector.example.com
             title: Cluster Connector Domain
-            description: The host domain for the cluster-connector API.
+            description: The host domain for the cluster-connector API
           cluster_connector_port:
             value: "8443"
             title: Cluster Connector Port
-            description: The host port for the cluster-connector API.
+            description: The host port for the cluster-connector API
           oidc_client_id:
             value: manager-ui
             title: OIDC Client ID
-            description: The OpenID Connect client ID for the application.
+            description: The OpenID Connect client ID for the application
           oidc_client_secret:
             value: "***"
             title: OIDC Client Secret
-            description: The OpenID Connect client secret for the application.
+            description: The OpenID Connect client secret for the application
           oidc_issuer:
             value: https://issuer.example.com
             title: OIDC Issuer
-            description: OpenID Connect Discovery URL for the provider.
+            description: OpenID Connect Discovery URL for the provider
           oidc_audience:
             value: microcloud-cluster-manager
             title: OIDC Audience
-            description: Expected audience value for the application.
+            description: Expected audience value for the application
           db_connection_string:
             value: postgresql://user:pass@db:5432/microcloud?sslmode=require
             title: Database Connection
-            description: The connection string for the Postgres database.
+            description: The connection string for the Postgres database
           db_max_idle_conns:
             value: "10"
             title: Database Max Idle Connections
-            description: The maximum number of idle connections in the database pool.
+            description: The maximum number of idle connections in the database pool
           db_max_open_conns:
             value: "50"
             title: Database Max Open Connections
-            description: The maximum number of open connections in the database pool.
+            description: The maximum number of open connections in the database pool
           grafana_base_url:
             value: https://grafana.example.com
             title: Grafana base URL
-            description: The base url for grafana.
+            description: The base url for grafana
           prometheus_base_url:
             value: https://prometheus.example.com
             title: Prometheus base URL
-            description: The base url for prometheus.
+            description: The base url for prometheus
           rate_limit_refill_rate:
             value: "5.00"
             title: Rate Limit Refill Rate
-            description: Tokens added to rate limiting bucket per second.
+            description: Tokens added to rate limiting bucket per second
           rate_limit_bucket_size:
             value: "10"
             title: Rate Limit Bucket Size
-            description: Maximum tokens in the rate limiting bucket (requests/second).
+            description: Maximum tokens in the rate limiting bucket (requests/second)
           rate_limit_client_active_interval:
             value: 5m0s
             title: Rate Limit Client Active Interval
-            description: Time after which inactive clients are available for clean up.
+            description: Time after which inactive clients are available for clean up
           rate_limit_cleanup_interval:
             value: 1m0s
             title: Rate Limit Cleanup Interval
-            description: Time between cleanup runs.
+            description: Time between cleanup runs
           rate_limit_log_interval:
             value: 10m0s
             title: Rate Limit Log Interval
-            description: Time between logs to avoid I/O strain.
+            description: Time between logs to avoid I/O strain
           rate_limit_max_clients:
             value: "1000"
             title: Rate Limit Max Clients

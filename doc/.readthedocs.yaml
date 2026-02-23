@@ -12,7 +12,7 @@ build:
     golang: "1.25"
     python: "3.12"
   commands:
-      - git fetch --unshallow || true
+      - git fetch --depth=1000
       - cd doc && make GOTOOLCHAIN=auto integrate
       - cd doc/integration/lxd/ && GOTOOLCHAIN=auto go build -ldflags "-s -w" -o trimpath -o lxc.bin ./lxc
       # Pretend that woke is installed - we don't need it for building
@@ -35,4 +35,4 @@ sphinx:
 # Optionally declare the Python requirements required to build your docs
 python:
    install:
-   - requirements: doc/.sphinx/requirements.txt
+     - requirements: doc/.sphinx/requirements.txt

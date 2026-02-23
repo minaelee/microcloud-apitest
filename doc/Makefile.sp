@@ -31,11 +31,13 @@ sp-full-help: $(VENVDIR)
 # https://bugs.launchpad.net/ubuntu/+source/python3.4/+bug/1290847
 $(SPHINXDIR)/requirements.txt:
 	@python3 -c "import venv" || \
-        (echo "You must install python3-venv before you can build the documentation."; exit 1)
+		(echo "You must install python3-venv before you can build the documentation."; exit 1)
 	python3 -m venv $(VENVDIR)
 	@if [ ! -z "$(ADDPREREQS)" ]; then \
-          . $(VENV); pip install --require-virtualenv $(ADDPREREQS); \
-        fi
+		  . $(VENV); pip install --require-virtualenv $(ADDPREREQS); \
+		fi
+	# Ensure all requirements are installed before running build_requirements.py
+	. $(VENV); pip install --require-virtualenv --upgrade -r $(SPHINXDIR)/requirements.txt
 	. $(VENV); python3 $(SPHINXDIR)/build_requirements.py
 
 # If requirements are updated, venv should be rebuilt and timestamped.
