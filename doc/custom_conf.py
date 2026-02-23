@@ -2,6 +2,7 @@ import datetime
 import os
 import yaml
 from redirects import redirects
+from git import Repo, InvalidGitRepositoryError
 
 # Custom configuration for the Sphinx documentation builder.
 # All configuration specific to your project should be done in this file.
@@ -22,7 +23,7 @@ from redirects import redirects
 ############################################################
 
 # Product name
-project = 'MicroCloud'
+project = 'MicroCloud-test'
 author = 'Canonical Group Ltd'
 
 # The title you want to display for the documentation in the sidebar.
@@ -45,18 +46,6 @@ html_title = ''
 #   https://api.github.com/repos/canonical/<REPO> | jq '.created_at'
 
 copyright = '%s, %s' % (datetime.date.today().year, author)
-
-## Open Graph configuration - defines what is displayed as a link preview
-## when linking to the documentation from another website (see https://ogp.me/)
-# The URL where the documentation will be hosted (leave empty if you
-# don't know yet)
-# NOTE: If no ogp_* variable is defined (e.g. if you remove this section) the
-# sphinxext.opengraph extension will be disabled.
-ogp_site_url = 'https://documentation.ubuntu.com/microcloud/latest'
-# The documentation website name (usually the same as the product name)
-ogp_site_name = project
-# The URL of an image or logo that is used in the preview
-ogp_image = 'https://assets.ubuntu.com/v1/d53eeeac-Microcloud_favicon_64px_v2.png'
 
 # Update with the local path to the favicon for your product
 # (default is the circle of friends)
@@ -98,7 +87,7 @@ html_context = {
 
     # Change to the GitHub URL for your project
     # This is used, for example, to link to the source files and allow creating GitHub issues directly from the documentation.
-    'github_url': 'https://github.com/canonical/microcloud',
+    'github_url': 'https://github.com/minaelee/microcloud-api-test',
 
     # Change to the branch for this version of the documentation
     'github_version': 'main',
@@ -122,9 +111,7 @@ html_context = {
     "display_contributors_since": ""
 }
 
-# If your project is on documentation.ubuntu.com, specify the project
-# slug (for example, "lxd") here.
-slug = "microcloud"
+slug = ""
 
 #######################
 # Sitemap configuration: https://sphinx-sitemap.readthedocs.io/
@@ -132,15 +119,21 @@ slug = "microcloud"
 
 # Base URL of RTD hosted project
 
-html_baseurl = 'https://documentation.ubuntu.com/microcloud/'
+html_baseurl = os.environ.get('READTHEDOCS_CANONICAL_URL', '/')
 
-# Configures URL scheme for sphinx-sitemap to generate correct URLs
-# based on the version if built in RTD
-if 'READTHEDOCS_VERSION' in os.environ:
-    rtd_version = os.environ["READTHEDOCS_VERSION"]
-    sitemap_url_scheme = f'{rtd_version}/microcloud/{{link}}'
-else:
-    sitemap_url_scheme = '{link}'
+# sphinx-sitemap uses html_baseurl (set earlier in this file) to generate the full URL for each page:
+
+sitemap_url_scheme = '{link}'
+
+# Include `lastmod` dates in the sitemap:
+sitemap_show_lastmod = True
+
+# Exclude generated pages from the sitemap:
+sitemap_excludes = [
+    '404/',
+    'genindex/',
+    'search/',
+]
 
 ############################################################
 ### Redirects
@@ -305,3 +298,30 @@ if not ('SINGLE_BUILD' in os.environ and os.environ['SINGLE_BUILD'] == 'True'):
 if os.path.exists('./substitutions.yaml'):
     with open('./substitutions.yaml', 'r') as fd:
         myst_substitutions = yaml.safe_load(fd.read())
+
+
+# SwaggerUI configuration
+
+if os.environ.get('READTHEDOCS'):
+    swagger_url_scheme = '/microcloud/latest/api/#{{path}}'
+else:
+    swagger_url_scheme = '/api/#{{path}}'
+
+myst_url_schemes = {
+    'http': None,
+    'https': None,
+    'swagger': swagger_url_scheme,
+}
+
+# Download and link swagger-ui files
+if not os.path.isdir('.sphinx/deps/swagger-ui'):
+    Repo.clone_from('https://github.com/swagger-api/swagger-ui', '.sphinx/deps/swagger-ui', depth=1)
+
+os.makedirs('_static/swagger-ui/', exist_ok=True)
+
+if not os.path.islink('_static/swagger-ui/swagger-ui-bundle.js'):
+    os.symlink('../../.sphinx/deps/swagger-ui/dist/swagger-ui-bundle.js', '_static/swagger-ui/swagger-ui-bundle.js')
+if not os.path.islink('_static/swagger-ui/swagger-ui-standalone-preset.js'):
+    os.symlink('../../.sphinx/deps/swagger-ui/dist/swagger-ui-standalone-preset.js', '_static/swagger-ui/swagger-ui-standalone-preset.js')
+if not os.path.islink('_static/swagger-ui/swagger-ui.css'):
+    os.symlink('../../.sphinx/deps/swagger-ui/dist/swagger-ui.css', '_static/swagger-ui/swagger-ui.css')

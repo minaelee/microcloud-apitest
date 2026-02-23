@@ -8,3 +8,4 @@ The reference material in this section provides technical information about Micr
 
 MicroCloud requirements </reference/requirements>
 /reference/releases-snaps
+/reference/cluster-manager-api
